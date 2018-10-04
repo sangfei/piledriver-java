@@ -10,8 +10,7 @@ import com.piledriver.service.bean.WorkRegion;
 
 @Transactional
 public interface WorkRegionDao extends CrudRepository<WorkRegion, Integer> {
-	
-	public List<WorkRegion> findByProjectid(int projectid);
 
+	public List<WorkRegion> findByProjectid(int projectid);
 
 }

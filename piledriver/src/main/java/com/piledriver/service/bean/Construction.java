@@ -9,15 +9,11 @@ import javax.persistence.Id;
 //@Table(name = "tbl_construction")
 public class Construction {
 	/**
-	 * CREATE TABLE `tbl_construction` ( `id` int(11) unsigned NOT NULL
- `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `date` bigint(11) NOT NULL, 
-  `rownumber` int(11) NOT NULL,
-  `pilenumber` int(11) NOT NULL,
-  `pilelength` double(22,2) NOT NULL,
-  `pilevirtuallength` double(22,2) NOT NULL,
-  `workregion` int(11) NOT NULL,
-  `workleader` int(11) NOT NULL,
+	 * CREATE TABLE `tbl_construction` ( `id` int(11) unsigned NOT NULL `id` int(11)
+	 * unsigned NOT NULL AUTO_INCREMENT, `date` bigint(11) NOT NULL, `rownumber`
+	 * int(11) NOT NULL, `pilenumber` int(11) NOT NULL, `pilelength` double(22,2)
+	 * NOT NULL, `pilevirtuallength` double(22,2) NOT NULL, `workregion` int(11) NOT
+	 * NULL, `workleader` int(11) NOT NULL,
 	 */
 
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -32,13 +28,13 @@ public class Construction {
 
 	@Column(name = "pilenumber", nullable = false, length = 11)
 	private int pilenumber;
-	
+
 	@Column(name = "pilelength", nullable = false, length = 22)
-	private double pilelength;	
-	
+	private double pilelength;
+
 	@Column(name = "pilevirtuallength", nullable = false, length = 22)
 	private double pilevirtuallength;
-	
+
 	@Column(name = "workregion", nullable = false, length = 11)
 	private int workregion;
 
@@ -115,6 +111,5 @@ public class Construction {
 				+ ", pilelength=" + pilelength + ", pilevirtuallength=" + pilevirtuallength + ", workregion="
 				+ workregion + ", workleader=" + workleader + "]";
 	}
-	
-	
+
 }

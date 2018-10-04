@@ -12,23 +12,23 @@ import javax.persistence.Table;
 public class ProjectInfo {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id", nullable = false, length = 11)
-	private int machineId;
+	private int id;
 	@Id
 	@Column(name = "name", nullable = false, length = 64)
 	private String name;
 
-	@Column(name = "desc", nullable = true, length = 128)
+	@Column(name = "detail", nullable = true, length = 128)
 	private String desc;
 
 	public ProjectInfo() {
 	}
 
-	public int getMachineId() {
-		return machineId;
+	public int getId() {
+		return id;
 	}
 
-	public void setMachineId(int machineId) {
-		this.machineId = machineId;
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public String getName() {
@@ -49,9 +49,7 @@ public class ProjectInfo {
 
 	@Override
 	public String toString() {
-		return "ProjectInfo [machineId=" + machineId + ", name=" + name + ", desc=" + desc + "]";
+		return "ProjectInfo [id=" + id + ", name=" + name + ", desc=" + desc + "]";
 	}
-
-	
 
 }

@@ -1,7 +1,6 @@
 package com.piledriver.service.dao;
 
 import java.sql.Date;
-import java.util.List;
 
 import javax.transaction.Transactional;
 
@@ -13,7 +12,7 @@ import com.piledriver.service.bean.Employee;
 
 @Transactional
 public interface EmployeeDao extends CrudRepository<Employee, Integer> {
-	
+
 	public Employee findByPhone(String phone);
 
 	// 利用原生的SQL进行插入操作

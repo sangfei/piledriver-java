@@ -1,6 +1,5 @@
 package com.piledriver.service.bean;
 
-
 public class ConstructionDetailInfo {
 
 	private Integer date;
@@ -17,7 +16,7 @@ public class ConstructionDetailInfo {
 
 	public ConstructionDetailInfo() {
 	}
-	
+
 	public ConstructionDetailInfo(Integer date, Integer rownumber, Integer pilenumber, Double pilelength,
 			Double pilevirtuallength, String stuff) {
 		this.date = date;

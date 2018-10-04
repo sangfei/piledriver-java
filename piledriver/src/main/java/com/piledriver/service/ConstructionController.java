@@ -31,7 +31,7 @@ public class ConstructionController {
 	@ResponseBody
 	@CrossOrigin
 	public ResponseEntity<List<ConstructionDetailInfo>> getProject(@RequestParam("workregionId") int workregionId) {
-		System.out.println("get construction detail.");
+		System.out.println("get construction detail  abc.");
 		System.out.println("================>" + workregionId);
 
 		List<ConstructionDetailInfo> plist = new ArrayList<ConstructionDetailInfo>();

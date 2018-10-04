@@ -4,7 +4,6 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -27,14 +26,14 @@ public class EmployeeController {
 
 	@Autowired
 	private EmployeeDao stuffDao;
-	
+
 	@RequestMapping(value = "/stuff", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@CrossOrigin
-	public ResponseEntity<Integer> addStuff(@RequestParam("name") String name,@RequestParam("sex") String sex,
-			@RequestParam("phone") String phone, @RequestParam("birth") String birth,@RequestParam("title") String title,
-			@RequestParam("pwd") String pwd) {
-		System.out.println("add stuff of "+ name);
+	public ResponseEntity<Integer> addStuff(@RequestParam("name") String name, @RequestParam("sex") String sex,
+			@RequestParam("phone") String phone, @RequestParam("birth") String birth,
+			@RequestParam("title") String title, @RequestParam("pwd") String pwd) {
+		System.out.println("add stuff of " + name);
 		int ret = 0;
 		try {
 			ret = stuffDao.insertStuff(name, sex, pwd, phone, Date.valueOf(birth), Integer.valueOf(title));
@@ -45,7 +44,7 @@ public class EmployeeController {
 		}
 		return new ResponseEntity<Integer>(ret, HttpStatus.OK);
 	}
-	
+
 	@RequestMapping(value = "/list/stuff", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@CrossOrigin
@@ -61,7 +60,7 @@ public class EmployeeController {
 		}
 		return new ResponseEntity<List<Employee>>(plist, HttpStatus.OK);
 	}
-	
+
 	@RequestMapping(value = "/stuff", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@CrossOrigin
@@ -76,8 +75,7 @@ public class EmployeeController {
 			e.printStackTrace();
 			return new ResponseEntity<Employee>(stuff, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		if(stuff.getName().equals(""))
-		{
+		if (stuff.getName().equals("")) {
 			return new ResponseEntity<Employee>(stuff, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		return new ResponseEntity<Employee>(stuff, HttpStatus.OK);

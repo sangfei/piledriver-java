@@ -64,5 +64,4 @@ public class WorkRegion {
 		return "WorkRegion [id=" + id + ", projectid=" + projectid + ", name=" + name + ", desc=" + desc + "]";
 	}
 
-	
 }

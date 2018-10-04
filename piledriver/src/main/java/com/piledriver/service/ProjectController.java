@@ -1,11 +1,11 @@
 package com.piledriver.service;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,10 +18,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
-import com.piledriver.service.bean.MachineConfig;
 import com.piledriver.service.bean.ProjectInfo;
-import com.piledriver.service.dao.MachineConfigDao;
+import com.piledriver.service.dao.ImageDao;
 import com.piledriver.service.dao.ProjectDao;
 
 @Controller
@@ -33,74 +33,7 @@ public class ProjectController {
 	private ProjectDao projectDao;
 
 	@Autowired
-	private MachineConfigDao machineDao;
-
-	@RequestMapping(value = "/config", method = RequestMethod.POST)
-	@ResponseBody
-	@CrossOrigin
-	public ResponseEntity<Map<String, Object>> insertConfig(@RequestParam("name") String name,
-			@RequestParam("delay") Integer delay, @RequestParam("duration") Integer duration,
-			HttpServletResponse response) {
-		Map<String, Object> map = new HashMap<String, Object>();
-
-		try {
-			machineDao.insertConfig(name, delay, duration);
-		} catch (Exception e) {
-			e.printStackTrace();
-			map.put("result", "fail");
-			map.put("detail", e.getMessage());
-			return new ResponseEntity<Map<String, Object>>(map, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-
-		map.put("result", "success");
-
-		System.out.println(map);
-		return new ResponseEntity<Map<String, Object>>(map, HttpStatus.OK);
-	}
-
-	@RequestMapping(value = "/config", method = RequestMethod.PUT)
-	@ResponseBody
-	@CrossOrigin
-	public ResponseEntity<Map<String, Object>> updateConfig(@RequestParam("name") String name,
-			@RequestParam("delay") Integer delay, @RequestParam("duration") Integer duration) {
-		System.out.println("name:" + name + ",delayt:" + delay + ",duration:" + duration);
-		Map<String, Object> map = new HashMap<String, Object>();
-		try {
-			int result = machineDao.upateConfig(delay, duration, name);
-			if (result == 0) {
-				throw new Exception("update pk not exist");
-			}
-			System.out.println(result);
-		} catch (Exception e) {
-			e.printStackTrace();
-			map.put("result", "fail");
-			map.put("detail", e.getMessage());
-			return new ResponseEntity<Map<String, Object>>(map, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-
-		map.put("result", "success");
-
-		System.out.println(map);
-		return new ResponseEntity<Map<String, Object>>(map, HttpStatus.OK);
-
-	}
-
-	@RequestMapping(value = "/config", method = RequestMethod.GET)
-	@ResponseBody
-	@CrossOrigin
-	public ResponseEntity<MachineConfig> getConfig(@RequestParam("name") String name) {
-		System.out.println("getConfig");
-		MachineConfig machineList = new MachineConfig();
-		try {
-			machineList = machineDao.findByMachineName(name);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new ResponseEntity<MachineConfig>(machineList, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-		System.out.println(machineList);
-		return new ResponseEntity<MachineConfig>(machineList, HttpStatus.OK);
-	}
+	private ImageDao imageDao;
 	
 	@RequestMapping(value = "/project", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
@@ -117,4 +50,63 @@ public class ProjectController {
 		}
 		return new ResponseEntity<List<ProjectInfo>>(plist, HttpStatus.OK);
 	}
+
+	@RequestMapping(value = "/project", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	public ResponseEntity<Integer> addProject(HttpServletRequest request, @RequestParam("name") String name,
+			@RequestParam("desc") String desc, @RequestParam("img") MultipartFile img)
+			throws UnsupportedEncodingException {
+		request.setCharacterEncoding("utf-8");
+		int ret = -1;
+		System.out.println("psot project=++++++++"+ name + "====" + desc);
+		if (!(name == null || "".equals(name))) {
+			try {
+				ProjectInfo project = projectDao.findByName(name);
+				// 如果有值说明名称重复
+				if(project != null && project.getId() != 0)
+				{
+					return new ResponseEntity<Integer>(-2, HttpStatus.INTERNAL_SERVER_ERROR);
+				}
+				projectDao.insertProject(name, desc);
+				
+				project = projectDao.findByName(name);
+				
+				String imageId = "P"+String.valueOf(project.getId());
+				return saveImage(img, imageId, ret);
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				return new ResponseEntity<Integer>(0, HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+		}
+		
+		return new ResponseEntity<Integer>(0, HttpStatus.INTERNAL_SERVER_ERROR);
+
+		
+	}
+
+	private ResponseEntity<Integer> saveImage(MultipartFile img, String imageId, int ret) {
+		List<String> fileTypes = new ArrayList<String>();
+		fileTypes.add("jpg");
+		fileTypes.add("jpeg");
+		fileTypes.add("bmp");
+		fileTypes.add("png");
+		String fileName = img.getOriginalFilename();
+		if (!(fileName == null || "".equals(fileName))) {
+			String extensionName = fileName.substring(fileName.lastIndexOf(".") + 1);
+			if (fileTypes.contains(extensionName)) {
+				try {
+					byte[] content = img.getBytes();
+					System.out.println("content " + content);
+					ret = imageDao.saveImage(content, imageId);
+					System.out.println("return " + ret);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		} else {
+			return new ResponseEntity<Integer>(0, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		return new ResponseEntity<Integer>(ret, HttpStatus.OK);
+	}
+
 }

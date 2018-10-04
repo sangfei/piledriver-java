@@ -12,14 +12,11 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 /**
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(30) NOT NULL DEFAULT '',
-  `sex` varchar(5) NOT NULL DEFAULT '',
-  `birth` varchar(11) DEFAULT NULL,
-  `title` int(11) DEFAULT NULL,
-  `pwd` varchar(32) NOT NULL DEFAULT '',
-  `phone` varchar(11) NOT NULL DEFAULT '',
-
+ * `id` int(11) unsigned NOT NULL AUTO_INCREMENT, `name` varchar(30) NOT NULL
+ * DEFAULT '', `sex` varchar(5) NOT NULL DEFAULT '', `birth` varchar(11) DEFAULT
+ * NULL, `title` int(11) DEFAULT NULL, `pwd` varchar(32) NOT NULL DEFAULT '',
+ * `phone` varchar(11) NOT NULL DEFAULT '',
+ * 
  * @author sangfei
  *
  */
@@ -32,16 +29,16 @@ public class Employee {
 
 	@Column(name = "name", nullable = false, length = 30)
 	private String name;
-	
+
 	@Column(name = "sex", nullable = false, length = 5)
 	private String sex;
-	
+
 	@Column(name = "title", nullable = true, length = 11)
 	private int title;
-	
+
 	@Column(name = "pwd", nullable = false, length = 32)
 	private String pwd;
-	
+
 	@Column(name = "phone", nullable = false, length = 11)
 	private String phone;
 
@@ -110,6 +107,5 @@ public class Employee {
 		return "Employee [id=" + id + ", name=" + name + ", sex=" + sex + ", title=" + title + ", pwd=" + pwd
 				+ ", phone=" + phone + ", birth=" + birth + "]";
 	}
-	
-	
+
 }
