@@ -8,15 +8,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.piledriver.service.bean.ConstructionDetailInfo;
-import com.piledriver.service.dao.ConstructionDetail2;
+import com.piledriver.service.bean.Construction;
+import com.piledriver.service.dao.ConstructionDao;
 import com.piledriver.service.utils.EntityUtils;
 
 @Controller
@@ -25,27 +24,37 @@ import com.piledriver.service.utils.EntityUtils;
 public class ConstructionController {
 
 	@Autowired
-	private ConstructionDetail2 constructionDetail;
+	private ConstructionDao constructionDetail;
 
 	@RequestMapping(value = "/construction", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	@CrossOrigin
-	public ResponseEntity<List<ConstructionDetailInfo>> getProject(@RequestParam("workregionId") int workregionId) {
-		System.out.println("get construction detail  abc.");
-		System.out.println("================>" + workregionId);
+	public ResponseEntity<List<Construction>> getProjectByTimeRange(@RequestParam("start") Integer starttime,
+			@RequestParam("end") Integer endtime, @RequestParam(value = "workregion", required = false) Integer workregion,
+			@RequestParam(value = "ownerid", required = false) Integer ownerid) {
+		System.out.println("getProjectByTimeRange start:" + starttime + " end:" + endtime);
 
-		List<ConstructionDetailInfo> plist = new ArrayList<ConstructionDetailInfo>();
+		List<Construction> plist = new ArrayList<Construction>();
 		try {
-			List<Object[]> select = constructionDetail.queryDetails(workregionId);
+			if (starttime != null && endtime != null) {
+				List<Object[]> select = null;
+				if (workregion != null) {
+					select = constructionDetail.queryByWorkRegionTimeRange(starttime, endtime, workregion);
+					System.out.println("getProjectByTimeRange select:" + select.size());
+				} else if (ownerid != null) {
+					select = constructionDetail.queryByOwnerTimeRange(starttime, endtime, ownerid);
+				} else {
+					select = constructionDetail.queryByTimeRange(starttime, endtime);
+				}
 
-			plist = EntityUtils.castEntity(select, ConstructionDetailInfo.class, new ConstructionDetailInfo());
-			System.out.println("================>" + plist);
+				plist = EntityUtils.castEntity(select, Construction.class, new Construction());
+				System.out.println("getProjectByTimeRange result:" + plist);
+			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<List<ConstructionDetailInfo>>(plist, HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<List<Construction>>(plist, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		return new ResponseEntity<List<ConstructionDetailInfo>>(plist, HttpStatus.OK);
+		return new ResponseEntity<List<Construction>>(plist, HttpStatus.OK);
 	}
 
 }

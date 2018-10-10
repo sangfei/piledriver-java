@@ -1,92 +1,71 @@
 package com.piledriver.service.bean;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-
-//@Entity
-//@Table(name = "tbl_construction")
 public class Construction {
-	/**
-	 * CREATE TABLE `tbl_construction` ( `id` int(11) unsigned NOT NULL `id` int(11)
-	 * unsigned NOT NULL AUTO_INCREMENT, `date` bigint(11) NOT NULL, `rownumber`
-	 * int(11) NOT NULL, `pilenumber` int(11) NOT NULL, `pilelength` double(22,2)
-	 * NOT NULL, `pilevirtuallength` double(22,2) NOT NULL, `workregion` int(11) NOT
-	 * NULL, `workleader` int(11) NOT NULL,
-	 */
-
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "id", nullable = false, length = 11)
-	@Id
+/*
+ * 	  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+	  `date` int(11) NOT NULL COMMENT '施工日期',
+	  `pieces` double(22,2) NOT NULL COMMENT '施工完成根数',
+	  `workregion` int(11) NOT NULL COMMENT '施工地块',
+	  `reporterid` int(11) DEFAULT NULL COMMENT '填报人',
+	  `status` int(11) DEFAULT NULL COMMENT '生产状态停工或施工中',
+	  `reason` varchar(128) DEFAULT NULL COMMENT '原因',
+	  `equipmentid` int(11) DEFAULT NULL COMMENT '设备编号',
+	  `imageid` varchar(13) DEFAULT NULL COMMENT '原因图像',
+	  `weather` varchar(12) DEFAULT NULL COMMENT '天气',
+	  `ownerid` int(11) DEFAULT NULL COMMENT '施工负责人',
+ */
 	private int id;
-	@Column(name = "date", nullable = false, length = 20)
-	private String date;
-
-	@Column(name = "rownumber", nullable = false, length = 11)
-	private int rownumber;
-
-	@Column(name = "pilenumber", nullable = false, length = 11)
-	private int pilenumber;
-
-	@Column(name = "pilelength", nullable = false, length = 22)
-	private double pilelength;
-
-	@Column(name = "pilevirtuallength", nullable = false, length = 22)
-	private double pilevirtuallength;
-
-	@Column(name = "workregion", nullable = false, length = 11)
+	private int date;
+	private double pieces;
 	private int workregion;
+	private int reporterid;
+	private int status;
+	private String reason;
+	private int equipmentid;
+	private String imageid;
+	private String weather;
+	private int ownerid;
 
-	@Column(name = "workleader", nullable = false, length = 11)
-	private int workleader;
+	public Construction() {
+	}
+
+	public Construction(int id , int date, double pieces, int workregion, int reporterid, int status,
+			String reason, int equipmentid, String imageid, String weather, int ownerid) {
+		super();
+		this.date = date;
+		this.pieces = pieces;
+		this.workregion = workregion;
+		this.reporterid = reporterid;
+		this.status = status;
+		this.reason = reason;
+		this.equipmentid = equipmentid;
+		this.imageid = imageid;
+		this.weather = weather;
+		this.ownerid = ownerid;
+	}
 
 	public int getId() {
 		return id;
 	}
-
+	
 	public void setId(int id) {
 		this.id = id;
 	}
 
-	public String getDate() {
+	public int getDate() {
 		return date;
 	}
 
-	public void setDate(String date) {
+	public void setDate(int date) {
 		this.date = date;
 	}
 
-	public int getRownumber() {
-		return rownumber;
+	public double getPieces() {
+		return pieces;
 	}
 
-	public void setRownumber(int rownumber) {
-		this.rownumber = rownumber;
-	}
-
-	public int getPilenumber() {
-		return pilenumber;
-	}
-
-	public void setPilenumber(int pilenumber) {
-		this.pilenumber = pilenumber;
-	}
-
-	public double getPilelength() {
-		return pilelength;
-	}
-
-	public void setPilelength(double pilelength) {
-		this.pilelength = pilelength;
-	}
-
-	public double getPilevirtuallength() {
-		return pilevirtuallength;
-	}
-
-	public void setPilevirtuallength(double pilevirtuallength) {
-		this.pilevirtuallength = pilevirtuallength;
+	public void setPieces(double pieces) {
+		this.pieces = pieces;
 	}
 
 	public int getWorkregion() {
@@ -97,19 +76,67 @@ public class Construction {
 		this.workregion = workregion;
 	}
 
-	public int getWorkleader() {
-		return workleader;
+	public int getReporterid() {
+		return reporterid;
 	}
 
-	public void setWorkleader(int workleader) {
-		this.workleader = workleader;
+	public void setReporterid(int reporterid) {
+		this.reporterid = reporterid;
+	}
+
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
+	}
+
+	public String getReason() {
+		return reason;
+	}
+
+	public void setReason(String reason) {
+		this.reason = reason;
+	}
+
+	public int getEquipmentid() {
+		return equipmentid;
+	}
+
+	public void setEquipmentid(int equipmentid) {
+		this.equipmentid = equipmentid;
+	}
+
+	public String getImageid() {
+		return imageid;
+	}
+
+	public void setImageid(String imageid) {
+		this.imageid = imageid;
+	}
+
+	public String getWeather() {
+		return weather;
+	}
+
+	public void setWeather(String weather) {
+		this.weather = weather;
+	}
+
+	public int getOwnerid() {
+		return ownerid;
+	}
+
+	public void setOwnerid(int ownerid) {
+		this.ownerid = ownerid;
 	}
 
 	@Override
 	public String toString() {
-		return "Construction [id=" + id + ", date=" + date + ", rownumber=" + rownumber + ", pilenumber=" + pilenumber
-				+ ", pilelength=" + pilelength + ", pilevirtuallength=" + pilevirtuallength + ", workregion="
-				+ workregion + ", workleader=" + workleader + "]";
+		return "ConstructionDetailInfo [date=" + date + ", pieces=" + pieces + ", workregion=" + workregion
+				+ ", reporterid=" + reporterid + ", status=" + status + ", reason=" + reason + ", equipmentid="
+				+ equipmentid + ", imageid=" + imageid + ", weather=" + weather + ", ownerid=" + ownerid + "]";
 	}
 
 }

@@ -20,6 +20,9 @@ public class ProjectInfo {
 	@Column(name = "detail", nullable = true, length = 128)
 	private String desc;
 
+	@Column(name = "partya", nullable = true, length = 64)
+	private String partya;
+
 	public ProjectInfo() {
 	}
 
@@ -47,9 +50,17 @@ public class ProjectInfo {
 		this.desc = desc;
 	}
 
+	public String getPartya() {
+		return partya;
+	}
+
+	public void setPartya(String partya) {
+		this.partya = partya;
+	}
+
 	@Override
 	public String toString() {
-		return "ProjectInfo [id=" + id + ", name=" + name + ", desc=" + desc + "]";
+		return "ProjectInfo [id=" + id + ", name=" + name + ", desc=" + desc + ", partya=" + partya + "]";
 	}
 
 }

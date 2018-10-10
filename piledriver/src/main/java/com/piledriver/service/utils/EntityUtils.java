@@ -37,6 +37,8 @@ public class EntityUtils {
 
 		// 获取当前实体类的属性名、属性值、属性类别
 		List<Map> attributeInfoList = getFiledsInfo(model);
+		System.out.println(attributeInfoList.toString());
+
 		// 创建属性类别数组
 		Class[] c2 = new Class[attributeInfoList.size()];
 		// 如果数组集合元素个数与实体类属性个数不一致则发生错误
@@ -54,6 +56,7 @@ public class EntityUtils {
 			}
 		} catch (Exception ex) {
 			logger.error("实体数据转化为实体类发生异常：异常信息：{}", ex.getMessage());
+			System.out.println(ex);
 			return returnList;
 		}
 		return returnList;

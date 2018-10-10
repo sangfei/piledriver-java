@@ -5,12 +5,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
-import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,9 +23,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.piledriver.service.bean.ProjectInfo;
+import com.piledriver.service.bean.Equipment;
+import com.piledriver.service.dao.EquipmentDao;
 import com.piledriver.service.dao.ImageDao;
-import com.piledriver.service.dao.ProjectDao;
 
 import net.coobird.thumbnailator.Thumbnailator;
 import net.coobird.thumbnailator.Thumbnails;
@@ -36,75 +34,55 @@ import net.coobird.thumbnailator.Thumbnails.Builder;
 @Controller
 @RestController
 @RequestMapping("/api/v1")
-public class ProjectController {
+public class EquipmentController {
 
 	@Autowired
-	private ProjectDao projectDao;
+	private EquipmentDao equipmentDao;
 
 	@Autowired
 	private ImageDao imageDao;
 
-	@RequestMapping(value = "/project", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/equipment", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@CrossOrigin
-	public ResponseEntity<List<ProjectInfo>> getProject() {
-		System.out.println("getAllProject");
-		List<ProjectInfo> plist = new ArrayList<ProjectInfo>();
+	public ResponseEntity<Integer> addEquipment(@RequestParam("name") String name, @RequestParam("brand") String brand,
+			@RequestParam("title") int title, @RequestParam("ownerid") int ownerid,
+			@RequestParam("model") String model, @RequestParam("img") MultipartFile img) {
+		System.out.println("add Equipment of " + name);
+		int ret = 0;
 		try {
-			plist = (List<ProjectInfo>) projectDao.findAll();
-			System.out.println("plist:" + plist);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new ResponseEntity<List<ProjectInfo>>(plist, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-		return new ResponseEntity<List<ProjectInfo>>(plist, HttpStatus.OK);
-	}
-
-	@RequestMapping(value = "/project", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	public ResponseEntity<Integer> deleteProject(@RequestParam("id") int id) {
-		System.out.println("deleteProject which id=" + id);
-		int ret = -1;
-		try {
-			ret = projectDao.deleteProject(id);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new ResponseEntity<Integer>(0, HttpStatus.INTERNAL_SERVER_ERROR);
-
-		}
-		return new ResponseEntity<Integer>(ret, HttpStatus.INTERNAL_SERVER_ERROR);
-	}
-
-	@RequestMapping(value = "/project", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
-	public ResponseEntity<Integer> addProject(HttpServletRequest request, @RequestParam("name") String name,
-			@RequestParam("desc") String desc, @RequestParam("img") MultipartFile img, @RequestParam("partya") String partya)
-			throws UnsupportedEncodingException {
-		request.setCharacterEncoding("utf-8");
-		int ret = -1;
-		System.out.println("add project name:" + name + " desc:" + desc+ " partya:" + partya);
-		if (!(name == null || "".equals(name))) {
-			try {
-				ProjectInfo project = projectDao.findByName(name);
-				// 如果有值说明名称重复
-				if (project != null && project.getId() != 0) {
-					return new ResponseEntity<Integer>(-2, HttpStatus.INTERNAL_SERVER_ERROR);
-				}
-				projectDao.insertProject(name, desc, partya);
-
-				project = projectDao.findByName(name);
-
-				String imageId = "P" + String.valueOf(project.getId());
-				return saveImage(img, imageId, ret);
-
-			} catch (Exception e) {
-				e.printStackTrace();
-				return new ResponseEntity<Integer>(0, HttpStatus.INTERNAL_SERVER_ERROR);
+			Equipment eqm = equipmentDao.findByName(name);
+			// 如果有值说明名称重复
+			if (eqm != null && eqm.getId() != 0) {
+				return new ResponseEntity<Integer>(-2, HttpStatus.INTERNAL_SERVER_ERROR);
 			}
+			ret = equipmentDao.insertEquipment( name,  brand,  title,  ownerid,  model);
+			eqm = equipmentDao.findByName(name);
+			String imageId = "E" + String.valueOf(eqm.getId());
+			return saveImage(img, imageId, ret);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Integer>(1, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-
-		return new ResponseEntity<Integer>(0, HttpStatus.INTERNAL_SERVER_ERROR);
-
 	}
+
+	@RequestMapping(value = "/list/equipment", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	@CrossOrigin
+	public ResponseEntity<List<Equipment>> getEquipment() {
+		System.out.println("get Equipment ");
+		List<Equipment> plist = new ArrayList<Equipment>();
+		try {
+			plist = (List<Equipment>) equipmentDao.findAll();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<List<Equipment>>(plist, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		return new ResponseEntity<List<Equipment>>(plist, HttpStatus.OK);
+	}
+
+
 
 	private ResponseEntity<Integer> saveImage(MultipartFile img, String imageId, int ret) {
 		List<String> fileTypes = new ArrayList<String>();
@@ -175,6 +153,4 @@ public class ProjectController {
         os.close();  
         return is;  
     }
-
-
 }
