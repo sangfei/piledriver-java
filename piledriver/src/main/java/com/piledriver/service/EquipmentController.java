@@ -46,7 +46,7 @@ public class EquipmentController {
 	@ResponseBody
 	@CrossOrigin
 	public ResponseEntity<Integer> addEquipment(@RequestParam("name") String name, @RequestParam("brand") String brand,
-			@RequestParam("title") int title, @RequestParam("ownerid") int ownerid,
+			@RequestParam("diameter") int diameter, @RequestParam("ownerid") int ownerid,
 			@RequestParam("model") String model, @RequestParam("img") MultipartFile img) {
 		System.out.println("add Equipment of " + name);
 		int ret = 0;
@@ -56,7 +56,7 @@ public class EquipmentController {
 			if (eqm != null && eqm.getId() != 0) {
 				return new ResponseEntity<Integer>(-2, HttpStatus.INTERNAL_SERVER_ERROR);
 			}
-			ret = equipmentDao.insertEquipment( name,  brand,  title,  ownerid,  model);
+			ret = equipmentDao.insertEquipment( name,  brand,  diameter,  ownerid,  model);
 			eqm = equipmentDao.findByName(name);
 			String imageId = "E" + String.valueOf(eqm.getId());
 			return saveImage(img, imageId, ret);
@@ -75,6 +75,7 @@ public class EquipmentController {
 		List<Equipment> plist = new ArrayList<Equipment>();
 		try {
 			plist = (List<Equipment>) equipmentDao.findAll();
+			System.out.println("get Equipment "+plist);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<List<Equipment>>(plist, HttpStatus.INTERNAL_SERVER_ERROR);

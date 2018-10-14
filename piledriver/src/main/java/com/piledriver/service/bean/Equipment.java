@@ -32,7 +32,7 @@ public class Equipment {
 	private String brand;
 
 	@Column(name = "diameter", nullable = false, length = 11)
-	private int title;
+	private int diameter;
 
 	@Column(name = "ownerid", nullable = false, length = 11)
 	private int ownerid;
@@ -40,12 +40,17 @@ public class Equipment {
 	@Column(name = "model", nullable = false, length = 24)
 	private String model;
 
-	public Equipment(int id, String name, String brand, int title, int ownerid, String model) {
+	public Equipment()
+	{
+		
+	}
+	
+	public Equipment(int id, String name, String brand, int diameter, int ownerid, String model) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.brand = brand;
-		this.title = title;
+		this.diameter = diameter;
 		this.ownerid = ownerid;
 		this.model = model;
 	}
@@ -74,12 +79,12 @@ public class Equipment {
 		this.brand = brand;
 	}
 
-	public int getTitle() {
-		return title;
+	public int getDiameter() {
+		return diameter;
 	}
 
-	public void setTitle(int title) {
-		this.title = title;
+	public void setDiameter(int diameter) {
+		this.diameter = diameter;
 	}
 
 	public int getOwnerid() {
@@ -100,7 +105,7 @@ public class Equipment {
 
 	@Override
 	public String toString() {
-		return "Employee [id=" + id + ", name=" + name + ", brand=" + brand + ", title=" + title + ", ownerid=" + ownerid
+		return "Employee [id=" + id + ", name=" + name + ", brand=" + brand + ", diameter=" + diameter + ", ownerid=" + ownerid
 				+ ", model=" + model + "]";
 	}
 

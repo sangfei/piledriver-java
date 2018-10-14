@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -64,17 +65,17 @@ public class ProjectController {
 	@ResponseBody
 	public ResponseEntity<Integer> deleteProject(@RequestParam("id") int id) {
 		System.out.println("deleteProject which id=" + id);
-		int ret = -1;
-		try {
-			ret = projectDao.deleteProject(id);
+ 		try {
+			projectDao.deleteProject(id);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<Integer>(0, HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<Integer>(1, HttpStatus.INTERNAL_SERVER_ERROR);
 
 		}
-		return new ResponseEntity<Integer>(ret, HttpStatus.INTERNAL_SERVER_ERROR);
+		return new ResponseEntity<Integer>(0, HttpStatus.OK);
 	}
 
+	@Transactional
 	@RequestMapping(value = "/project", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	public ResponseEntity<Integer> addProject(HttpServletRequest request, @RequestParam("name") String name,
 			@RequestParam("desc") String desc, @RequestParam("img") MultipartFile img, @RequestParam("partya") String partya)

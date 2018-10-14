@@ -8,10 +8,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
-import com.piledriver.service.bean.WorkRegion;
+import com.piledriver.service.bean.Construction;
 
 @Transactional
-public interface ConstructionDao extends CrudRepository<WorkRegion, Integer> {
+public interface ConstructionDao extends CrudRepository<Construction, Integer> {
 
 	// // 利用原生的SQL进行插入操作
 	// @Query(value = "select t1.date, t1.rownumber, t1.pilenumber, t1.pilelength,
@@ -33,4 +33,5 @@ public interface ConstructionDao extends CrudRepository<WorkRegion, Integer> {
 	@Query(value = "select * from tbl_construction where date >= :starttime and date <= :endtime and workregion = :ownerid", nativeQuery = true)
 	List<Object[]> queryByOwnerTimeRange(@Param("starttime") Integer starttime, @Param("endtime") Integer endtime,
 			@Param("ownerid") Integer ownerid);
+	
 }

@@ -21,7 +21,7 @@ public class WorkRegion {
 	@Column(name = "name", nullable = false, length = 64)
 	private String name;
 
-	@Column(name = "desc", nullable = true, length = 128)
+	@Column(name = "detail", nullable = true, length = 128)
 	private String desc;
 
 	public WorkRegion() {
