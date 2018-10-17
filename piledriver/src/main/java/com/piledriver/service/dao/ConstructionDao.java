@@ -27,11 +27,15 @@ public interface ConstructionDao extends CrudRepository<Construction, Integer> {
 	List<Object[]> queryByTimeRange(@Param("starttime") int starttime, @Param("endtime") int endtime);
 
 	@Query(value = "select * from tbl_construction where date >= ?1 and date <= ?2 and workregion = ?3", nativeQuery = true)
-	List<Object[]> queryByWorkRegionTimeRange(int starttime, int endtime,
-			int workregion);
+	List<Object[]> queryByWorkRegionTimeRange(int starttime, int endtime, int workregion);
 
-	@Query(value = "select * from tbl_construction where date >= :starttime and date <= :endtime and workregion = :ownerid", nativeQuery = true)
-	List<Object[]> queryByOwnerTimeRange(@Param("starttime") Integer starttime, @Param("endtime") Integer endtime,
-			@Param("ownerid") Integer ownerid);
+	@Query(value = "select * from tbl_construction where date >= ?1 and date <= ?2 and ownerid = ?3", nativeQuery = true)
+	List<Object[]> queryByOwnerTimeRange(int starttime, int endtime, int ownerid);
 	
+	@Query(value = "select ownerid as id, sum(pieces) as pieces,'owner' as type from tbl_construction where date >= ?1 and date <= ?2 group by ownerid", nativeQuery = true)
+	List<Object[]> groupByOwner(int starttime, int endtime, int ownerid);
+
+	@Query(value = "select equipmentid as id, sum(pieces) as pieces, 'equipment' as type from tbl_construction where date >= ?1 and date <= ?2 and workregion = ?3 group by equipmentid", nativeQuery = true)
+	List<Object[]> groupByEquipMentOfWorkRegion(int starttime, int endtime, int workregion);
+
 }

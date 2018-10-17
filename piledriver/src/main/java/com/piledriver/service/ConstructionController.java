@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.piledriver.service.bean.Construction;
+import com.piledriver.service.bean.ConstructionStatistic;
 import com.piledriver.service.dao.ConstructionDao;
 import com.piledriver.service.utils.EntityUtils;
 
@@ -28,11 +29,14 @@ public class ConstructionController {
 
 	@RequestMapping(value = "/construction", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public ResponseEntity<List<Construction>> getProjectByTimeRange(@RequestParam("start") Integer starttime,
-			@RequestParam("end") Integer endtime,
+	public ResponseEntity<List<Construction>> getProjectByTimeRange(@RequestParam("start") Long starttimel,
+			@RequestParam("end") Long endtimel,
 			@RequestParam(value = "workregion", required = false) Integer workregion,
 			@RequestParam(value = "ownerid", required = false) Integer ownerid) {
-		System.out.println("getProjectByTimeRange start:" + starttime + " end:" + endtime);
+		System.out.println("getProjectByTimeRange start:" + starttimel + " end:" + endtimel);
+
+		Integer starttime = (int) (starttimel / 1000);
+		Integer endtime = (int) (endtimel / 1000);
 
 		List<Construction> plist = new ArrayList<Construction>();
 		try {
@@ -56,6 +60,34 @@ public class ConstructionController {
 			return new ResponseEntity<List<Construction>>(plist, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		return new ResponseEntity<List<Construction>>(plist, HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/construction/stat", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public ResponseEntity<List<ConstructionStatistic>> staticByTimeRange(@RequestParam("start") Long starttimel,
+			@RequestParam("end") Long endtimel,
+			@RequestParam(value = "workregion", required = false) Integer workregion,
+			@RequestParam(value = "ownerid", required = false) Integer ownerid) {
+		Integer starttime = (int) (starttimel / 1000);
+		Integer endtime = (int) (endtimel / 1000);
+		System.out.println("getProjectByTimeRange start:" + starttime + " end:" + endtime);
+
+		List<ConstructionStatistic> plist = new ArrayList<ConstructionStatistic>();
+		try {
+			if (starttime != null && endtime != null) {
+				List<Object[]> select = null;
+
+				select = constructionDetail.groupByEquipMentOfWorkRegion(starttime, endtime, workregion);
+
+				plist = EntityUtils.castEntity(select, ConstructionStatistic.class, new ConstructionStatistic());
+				System.out.println("getProjectByTimeRange result:" + plist);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<List<ConstructionStatistic>>(plist, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		return new ResponseEntity<List<ConstructionStatistic>>(plist, HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/construction", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
