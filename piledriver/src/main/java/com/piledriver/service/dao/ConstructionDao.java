@@ -32,10 +32,16 @@ public interface ConstructionDao extends CrudRepository<Construction, Integer> {
 	@Query(value = "select * from tbl_construction where date >= ?1 and date <= ?2 and ownerid = ?3", nativeQuery = true)
 	List<Object[]> queryByOwnerTimeRange(int starttime, int endtime, int ownerid);
 	
-	@Query(value = "select ownerid as id, sum(pieces) as pieces,'owner' as type from tbl_construction where date >= ?1 and date <= ?2 group by ownerid", nativeQuery = true)
-	List<Object[]> groupByOwner(int starttime, int endtime, int ownerid);
+	@Query(value = "select ownerid as id, sum(pieces) as pieces,?4 as type from tbl_construction where date >= ?1 and date <= ?2 group by ownerid", nativeQuery = true)
+	List<Object[]> groupByOwner(int starttime, int endtime, int ownerid, String qtype);
 
-	@Query(value = "select equipmentid as id, sum(pieces) as pieces, 'equipment' as type from tbl_construction where date >= ?1 and date <= ?2 and workregion = ?3 group by equipmentid", nativeQuery = true)
-	List<Object[]> groupByEquipMentOfWorkRegion(int starttime, int endtime, int workregion);
+	@Query(value = "select equipmentid as id, sum(pieces) as pieces, ?4 as type from tbl_construction where date >= ?1 and date <= ?2 and workregion = ?3 group by equipmentid", nativeQuery = true)
+	List<Object[]> groupByEquipMentOfWorkRegion(int starttime, int endtime, int workregion, String qtype);
+	
+	@Query(value = "select equipmentid as id, sum(pieces) as pieces, ?4 as type from tbl_construction where date >= ?1 and date <= ?2 and equipmentid = ?3 group by equipmentid", nativeQuery = true)
+	List<Object[]> groupByEquipMentOfEquipment(int starttime, int endtime, int equipmentid, String qtype);
+	
+	@Query(value = "select workregion as id, sum(pieces) as pieces, ?4 as type from tbl_construction where date >= ?1 and date <= ?2 and workregion = ?3 group by workregion", nativeQuery = true)
+	List<Object[]> groupByWorkRegionOfWorkRegion(int starttime, int endtime, int workregion, String qtype);
 
 }

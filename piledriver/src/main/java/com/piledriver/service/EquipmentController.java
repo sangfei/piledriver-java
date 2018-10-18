@@ -67,6 +67,21 @@ public class EquipmentController {
 		}
 	}
 
+	@RequestMapping(value = "/equipment", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public ResponseEntity<Integer> deleteEquipment(@RequestParam("id") int id) {
+		System.out.println("deleteEquipment id:" + id);
+
+		try {
+			equipmentDao.delete(id);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Integer>(1, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		return new ResponseEntity<Integer>(0, HttpStatus.OK);
+	}
+	
 	@RequestMapping(value = "/list/equipment", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@CrossOrigin

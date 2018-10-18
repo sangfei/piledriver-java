@@ -31,7 +31,7 @@ public class ConstructionController {
 	@ResponseBody
 	public ResponseEntity<List<Construction>> getProjectByTimeRange(@RequestParam("start") Long starttimel,
 			@RequestParam("end") Long endtimel,
-			@RequestParam(value = "workregion", required = false) Integer workregion,
+			@RequestParam(value = "workregionid", required = false) Integer workregion,
 			@RequestParam(value = "ownerid", required = false) Integer ownerid) {
 		System.out.println("getProjectByTimeRange start:" + starttimel + " end:" + endtimel);
 
@@ -65,22 +65,65 @@ public class ConstructionController {
 	@RequestMapping(value = "/construction/stat", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public ResponseEntity<List<ConstructionStatistic>> staticByTimeRange(@RequestParam("start") Long starttimel,
-			@RequestParam("end") Long endtimel,
-			@RequestParam(value = "workregion", required = false) Integer workregion,
+			@RequestParam("end") Long endtimel, @RequestParam("type") String statType,
+			@RequestParam(value = "workregionid", required = false) Integer workregion,
+			@RequestParam(value = "equipmentid", required = false) Integer equipmentid,
 			@RequestParam(value = "ownerid", required = false) Integer ownerid) {
 		Integer starttime = (int) (starttimel / 1000);
 		Integer endtime = (int) (endtimel / 1000);
-		System.out.println("getProjectByTimeRange start:" + starttime + " end:" + endtime);
+		System.out.println("staticByTimeRange start:" + starttime + " end:" + endtime);
 
 		List<ConstructionStatistic> plist = new ArrayList<ConstructionStatistic>();
 		try {
-			if (starttime != null && endtime != null) {
+			if (starttime != null && endtime != null && statType != null) {
+
 				List<Object[]> select = null;
+				List<Object[]> total = null;
+				if ("g_owner".equalsIgnoreCase(statType) && ownerid != null) {
 
-				select = constructionDetail.groupByEquipMentOfWorkRegion(starttime, endtime, workregion);
+					select = constructionDetail.groupByOwner(starttime, endtime, ownerid, statType);
+					plist = EntityUtils.castEntity(select, ConstructionStatistic.class, new ConstructionStatistic());
 
-				plist = EntityUtils.castEntity(select, ConstructionStatistic.class, new ConstructionStatistic());
-				System.out.println("getProjectByTimeRange result:" + plist);
+					total = constructionDetail.groupByOwner(0, endtime, ownerid, "total");
+					plist.addAll(
+							EntityUtils.castEntity(total, ConstructionStatistic.class, new ConstructionStatistic()));
+					System.out.println("groupByOwner result:" + plist);
+
+
+				} else if ("g_equipment_s_workregion".equalsIgnoreCase(statType) && workregion != null) {
+
+					select = constructionDetail.groupByEquipMentOfWorkRegion(starttime, endtime, workregion, statType);
+					plist = EntityUtils.castEntity(select, ConstructionStatistic.class, new ConstructionStatistic());
+
+					total = constructionDetail.groupByEquipMentOfWorkRegion(0, endtime, workregion, "total");
+					plist.addAll(
+							EntityUtils.castEntity(total, ConstructionStatistic.class, new ConstructionStatistic()));
+					System.out.println("groupByEquipMentOfWorkRegion result:" + plist);
+
+
+				} else if ("g_workregion_s_workregion".equalsIgnoreCase(statType) && workregion != null) {
+
+					select = constructionDetail.groupByWorkRegionOfWorkRegion(starttime, endtime, workregion, statType);
+					plist = EntityUtils.castEntity(select, ConstructionStatistic.class, new ConstructionStatistic());
+
+					total = constructionDetail.groupByWorkRegionOfWorkRegion(0, endtime, workregion, "total");
+					plist.addAll(
+							EntityUtils.castEntity(total, ConstructionStatistic.class, new ConstructionStatistic()));
+					System.out.println("groupByWorkRegionOfWorkRegion result:" + plist);
+				} else if ("g_equipment_s_equipment".equalsIgnoreCase(statType) && equipmentid != null) {
+
+					select = constructionDetail.groupByEquipMentOfEquipment(starttime, endtime, equipmentid, statType);
+					plist = EntityUtils.castEntity(select, ConstructionStatistic.class, new ConstructionStatistic());
+
+					total = constructionDetail.groupByEquipMentOfEquipment(0, endtime, equipmentid, "total");
+					plist.addAll(
+							EntityUtils.castEntity(total, ConstructionStatistic.class, new ConstructionStatistic()));
+					System.out.println("groupByEquipMentOfEquipment result:" + plist);
+
+				} else {
+					return new ResponseEntity<List<ConstructionStatistic>>(plist, HttpStatus.INTERNAL_SERVER_ERROR);
+				}
+				System.out.println("staticByTimeRange empty:" + plist);
 			}
 
 		} catch (Exception e) {
