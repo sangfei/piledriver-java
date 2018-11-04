@@ -32,6 +32,7 @@ public class ConstructionController {
 	public ResponseEntity<List<Construction>> getProjectByTimeRange(@RequestParam("start") Long starttimel,
 			@RequestParam("end") Long endtimel,
 			@RequestParam(value = "workregionid", required = false) Integer workregion,
+			@RequestParam(value = "equipmentid", required = false) Integer equipmentid,
 			@RequestParam(value = "ownerid", required = false) Integer ownerid) {
 		System.out.println("getProjectByTimeRange start:" + starttimel + " end:" + endtimel);
 
@@ -47,6 +48,8 @@ public class ConstructionController {
 					System.out.println("getProjectByTimeRange select:" + select.size());
 				} else if (ownerid != null) {
 					select = constructionDetail.queryByOwnerTimeRange(starttime, endtime, ownerid);
+				} else if (equipmentid != null) {
+					select = constructionDetail.queryByEquipmentTimeRange(starttime, endtime, equipmentid);
 				} else {
 					select = constructionDetail.queryByTimeRange(starttime, endtime);
 				}
@@ -67,58 +70,79 @@ public class ConstructionController {
 	public ResponseEntity<List<ConstructionStatistic>> staticByTimeRange(@RequestParam("start") Long starttimel,
 			@RequestParam("end") Long endtimel, @RequestParam("type") String statType,
 			@RequestParam(value = "workregionid", required = false) Integer workregion,
+			@RequestParam(value = "projectid", required = false) Integer projectid,
 			@RequestParam(value = "equipmentid", required = false) Integer equipmentid,
 			@RequestParam(value = "ownerid", required = false) Integer ownerid) {
 		Integer starttime = (int) (starttimel / 1000);
 		Integer endtime = (int) (endtimel / 1000);
-		System.out.println("staticByTimeRange start:" + starttime + " end:" + endtime);
+		System.out.println("staticByTimeRange start:" + starttime + " end:" + endtime + " statType:" + statType
+				+ " workregion:" + workregion + " equipmentid:" + equipmentid);
 
 		List<ConstructionStatistic> plist = new ArrayList<ConstructionStatistic>();
 		try {
 			if (starttime != null && endtime != null && statType != null) {
 
 				List<Object[]> select = null;
-				List<Object[]> total = null;
-				if ("g_owner".equalsIgnoreCase(statType) && ownerid != null) {
+				if ("g_owner".equalsIgnoreCase(statType)) {
 
-					select = constructionDetail.groupByOwner(starttime, endtime, ownerid, statType);
+					select = constructionDetail.groupByOwner(starttime, endtime, statType);
 					plist = EntityUtils.castEntity(select, ConstructionStatistic.class, new ConstructionStatistic());
 
-					total = constructionDetail.groupByOwner(0, endtime, ownerid, "total");
-					plist.addAll(
-							EntityUtils.castEntity(total, ConstructionStatistic.class, new ConstructionStatistic()));
 					System.out.println("groupByOwner result:" + plist);
 
+				} else if ("g_project".equalsIgnoreCase(statType)) {
+
+					select = constructionDetail.groupByProject(starttime, endtime, statType);
+					plist = EntityUtils.castEntity(select, ConstructionStatistic.class, new ConstructionStatistic());
+					System.out.println("groupByProject result:" + plist);
+
+				} else if ("g_workregion".equalsIgnoreCase(statType)) {
+
+					select = constructionDetail.groupByWorkregion(starttime, endtime, statType);
+					plist = EntityUtils.castEntity(select, ConstructionStatistic.class, new ConstructionStatistic());
+
+					System.out.println("groupByProject result:" + plist);
+
+				} else if ("g_equipment".equalsIgnoreCase(statType)) {
+
+					select = constructionDetail.groupByEquipment(starttime, endtime, statType);
+					plist = EntityUtils.castEntity(select, ConstructionStatistic.class, new ConstructionStatistic());
+
+					System.out.println("groupByProject result:" + plist);
 
 				} else if ("g_equipment_s_workregion".equalsIgnoreCase(statType) && workregion != null) {
 
 					select = constructionDetail.groupByEquipMentOfWorkRegion(starttime, endtime, workregion, statType);
 					plist = EntityUtils.castEntity(select, ConstructionStatistic.class, new ConstructionStatistic());
 
-					total = constructionDetail.groupByEquipMentOfWorkRegion(0, endtime, workregion, "total");
-					plist.addAll(
-							EntityUtils.castEntity(total, ConstructionStatistic.class, new ConstructionStatistic()));
 					System.out.println("groupByEquipMentOfWorkRegion result:" + plist);
-
 
 				} else if ("g_workregion_s_workregion".equalsIgnoreCase(statType) && workregion != null) {
 
 					select = constructionDetail.groupByWorkRegionOfWorkRegion(starttime, endtime, workregion, statType);
 					plist = EntityUtils.castEntity(select, ConstructionStatistic.class, new ConstructionStatistic());
 
-					total = constructionDetail.groupByWorkRegionOfWorkRegion(0, endtime, workregion, "total");
-					plist.addAll(
-							EntityUtils.castEntity(total, ConstructionStatistic.class, new ConstructionStatistic()));
 					System.out.println("groupByWorkRegionOfWorkRegion result:" + plist);
 				} else if ("g_equipment_s_equipment".equalsIgnoreCase(statType) && equipmentid != null) {
 
 					select = constructionDetail.groupByEquipMentOfEquipment(starttime, endtime, equipmentid, statType);
 					plist = EntityUtils.castEntity(select, ConstructionStatistic.class, new ConstructionStatistic());
 
-					total = constructionDetail.groupByEquipMentOfEquipment(0, endtime, equipmentid, "total");
-					plist.addAll(
-							EntityUtils.castEntity(total, ConstructionStatistic.class, new ConstructionStatistic()));
 					System.out.println("groupByEquipMentOfEquipment result:" + plist);
+
+				} else if ("all".equalsIgnoreCase(statType) && workregion != null) {
+
+					select = constructionDetail.queryStatByTimeRange(starttime, endtime, workregion, statType);
+					plist = EntityUtils.castEntity(select, ConstructionStatistic.class, new ConstructionStatistic());
+
+					System.out.println("queryStatByTimeRange result:" + plist);
+
+				} else if ("listByEquipment".equalsIgnoreCase(statType) && equipmentid != null) {
+
+					select = constructionDetail.queryStatByTimeRangeEquipment(starttime, endtime, equipmentid, statType);
+					plist = EntityUtils.castEntity(select, ConstructionStatistic.class, new ConstructionStatistic());
+
+					System.out.println("queryStatByTimeRange result:" + plist);
 
 				} else {
 					return new ResponseEntity<List<ConstructionStatistic>>(plist, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -128,6 +152,7 @@ public class ConstructionController {
 
 		} catch (Exception e) {
 			e.printStackTrace();
+			System.out.println("Exception:" + e);
 			return new ResponseEntity<List<ConstructionStatistic>>(plist, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		return new ResponseEntity<List<ConstructionStatistic>>(plist, HttpStatus.OK);
@@ -135,19 +160,23 @@ public class ConstructionController {
 
 	@RequestMapping(value = "/construction", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public ResponseEntity<Integer> insertConstrcution(@RequestParam("date") int date,
-			@RequestParam("pieces") double pieces, @RequestParam("workregion") int workregion,
-			@RequestParam(value = "reporterid", required = false) int reporterid,
-			@RequestParam(value = "status", required = false) int status,
+	public ResponseEntity<Integer> insertConstrcution(@RequestParam("date") Long starttimel,
+			@RequestParam("pieces") Double pieces, @RequestParam("workregion") Integer workregion,
+			@RequestParam(value = "reporterid", required = false) Integer reporterid,
+			@RequestParam(value = "projectid") Integer projectid,
+			@RequestParam(value = "status", required = false) Integer status,
 			@RequestParam(value = "reason", required = false) String reason,
-			@RequestParam("equipmentid") int equipmentid,
+			@RequestParam("equipmentid") Integer equipmentid,
 			@RequestParam(value = "imageid", required = false) String imageid,
-			@RequestParam(value = "weather", required = false) String weather, @RequestParam("ownerid") int ownerid) {
+			@RequestParam(value = "weather", required = false) String weather,
+			@RequestParam("ownerid") Integer ownerid) {
+		Integer date = (int) (starttimel / 1000);
+
 		System.out.println("insertConstrcution date:" + date + " pieces:" + pieces + " equipmentid:" + equipmentid
 				+ " ownerid:" + ownerid);
 
-		Construction entity = new Construction(date, pieces, workregion, reporterid, status, reason, equipmentid,
-				imageid, weather, ownerid);
+		Construction entity = new Construction(date, pieces, workregion, 0, 0, reason, equipmentid, imageid, weather,
+				ownerid, projectid);
 
 		try {
 			Construction ret = constructionDetail.save(entity);

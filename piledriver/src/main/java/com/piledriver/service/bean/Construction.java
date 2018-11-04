@@ -5,8 +5,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "tbl_construction")
 public class Construction {
 	/*
 	 * `id` int(11) unsigned NOT NULL AUTO_INCREMENT, `date` int(11) NOT NULL
@@ -30,17 +32,19 @@ public class Construction {
 	private String imageid;
 	private String weather;
 	private int ownerid;
+	private int projectid;
 
 	public Construction() {
 	}
 
 	public Construction(int id, int date, double pieces, int workregion, int reporterid, int status, String reason,
-			int equipmentid, String imageid, String weather, int ownerid) {
-		super();
+			int equipmentid, String imageid, String weather, int ownerid, int projectid) {
+		this.id = id;
 		this.date = date;
 		this.pieces = pieces;
 		this.workregion = workregion;
 		this.reporterid = reporterid;
+		this.projectid = projectid;
 		this.status = status;
 		this.reason = reason;
 		this.equipmentid = equipmentid;
@@ -50,11 +54,12 @@ public class Construction {
 	}
 
 	public Construction(int date, double pieces, int workregion, int reporterid, int status, String reason,
-			int equipmentid, String imageid, String weather, int ownerid) {
+			int equipmentid, String imageid, String weather, int ownerid, int projectid) {
 		this.date = date;
 		this.pieces = pieces;
 		this.workregion = workregion;
 		this.reporterid = reporterid;
+		this.projectid = projectid;
 		this.status = status;
 		this.reason = reason;
 		this.equipmentid = equipmentid;
@@ -154,11 +159,20 @@ public class Construction {
 		this.ownerid = ownerid;
 	}
 
+	public int getProjectid() {
+		return projectid;
+	}
+
+	public void setProjectid(int projectid) {
+		this.projectid = projectid;
+	}
+
 	@Override
 	public String toString() {
-		return "ConstructionDetailInfo [date=" + date + ", pieces=" + pieces + ", workregion=" + workregion
-				+ ", reporterid=" + reporterid + ", status=" + status + ", reason=" + reason + ", equipmentid="
-				+ equipmentid + ", imageid=" + imageid + ", weather=" + weather + ", ownerid=" + ownerid + "]";
+		return "Construction [id=" + id + ", date=" + date + ", pieces=" + pieces + ", workregion=" + workregion
+				+ ", reporterid=" + reporterid + ", projectid=" + projectid + ", status=" + status + ", reason="
+				+ reason + ", equipmentid=" + equipmentid + ", imageid=" + imageid + ", weather=" + weather
+				+ ", ownerid=" + ownerid + "]";
 	}
 
 }

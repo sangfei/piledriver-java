@@ -32,11 +32,18 @@ public class WorkRegionController {
 	@RequestMapping(value = "/workregion", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	@CrossOrigin
-	public ResponseEntity<List<WorkRegion>> getProject(@RequestParam("projectid") int projectid) {
+	public ResponseEntity<List<WorkRegion>> getProject(
+			@RequestParam(value = "projectid", required = false) Integer projectid) {
 		System.out.println("get work region");
 		List<WorkRegion> plist = new ArrayList<WorkRegion>();
 		try {
-			plist = (List<WorkRegion>) workRegionDao.findByProjectid(projectid);
+			if (projectid != null) {
+				plist = (List<WorkRegion>) workRegionDao.findByProjectid(projectid);
+
+			} else {
+				plist = (List<WorkRegion>) workRegionDao.findAll();
+
+			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -44,13 +51,13 @@ public class WorkRegionController {
 		}
 		return new ResponseEntity<List<WorkRegion>>(plist, HttpStatus.OK);
 	}
-	
+
 	@RequestMapping(value = "/workregion", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public ResponseEntity<Integer> deleteProject(@RequestParam("id") int id) {
 		System.out.println("deleteworkregiont which id=" + id);
- 		try {
- 			workRegionDao.delete(id);
+		try {
+			workRegionDao.delete(id);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<Integer>(1, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -58,13 +65,13 @@ public class WorkRegionController {
 		}
 		return new ResponseEntity<Integer>(0, HttpStatus.OK);
 	}
-	
+
 	@RequestMapping(value = "/workregion", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	public ResponseEntity<Integer> addWorkRegion(HttpServletRequest request, @RequestParam("name") String name,
 			@RequestParam("desc") String desc, @RequestParam("projectid") int projectid)
 			throws UnsupportedEncodingException {
 		request.setCharacterEncoding("utf-8");
-		System.out.println("add addWorkRegion name:" + name + " desc:" + desc+ " projectid:" + projectid);
+		System.out.println("add addWorkRegion name:" + name + " desc:" + desc + " projectid:" + projectid);
 		if (!(name == null || name.isEmpty())) {
 			try {
 				WorkRegion workRegion = workRegionDao.findworkregion(name, projectid);
